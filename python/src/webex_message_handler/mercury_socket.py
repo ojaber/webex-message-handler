@@ -274,7 +274,8 @@ class MercurySocket:
     def _handle_activity_envelope(self, message: dict[str, Any]) -> None:
         data = message.get("data", {})
         event_type = data.get("eventType", "")
-        self._logger.debug(f"Mercury eventType: {event_type}")
+        # [DIAG] upgraded to info for capturing every envelope. Revert before upstream.
+        self._logger.info(f"DIAG Mercury envelope eventType={event_type!r}")
 
         # Send ACK
         if self._ws and not self._ws.closed:

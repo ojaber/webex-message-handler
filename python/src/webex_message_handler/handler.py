@@ -464,6 +464,16 @@ class WebexMessageHandler:
             self._emit("error", exc if isinstance(exc, Exception) else Exception(str(exc)))
 
     async def _handle_activity(self, activity: MercuryActivity) -> None:
+        # [DIAG] Log every activity before filtering so we can see what Mercury
+        # actually delivers. Remove before upstreaming.
+        self._logger.info(
+            "DIAG raw activity: id=%s verb=%s actor_type=%s object_type=%s "
+            "target_type=%s target_tags=%s has_parent=%s files_count=%d",
+            activity.id, activity.verb, activity.actor.object_type,
+            activity.object.object_type, activity.target.object_type,
+            activity.target.tags, activity.parent is not None,
+            len(activity.object.files or []),
+        )
         # Activity replay protection: check if we've already seen this activity
         if activity.id in self._recent_activity_ids:
             self._logger.warning(f"Duplicate activity detected, skipping: {activity.id}")
