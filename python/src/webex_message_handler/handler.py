@@ -474,6 +474,13 @@ class WebexMessageHandler:
             activity.target.tags, activity.parent is not None,
             len(activity.object.files or []),
         )
+        # [DIAG] Dump raw files structure
+        if activity.object.files:
+            self._logger.info(
+                "DIAG raw files: type=%s repr=%r",
+                type(activity.object.files).__name__,
+                activity.object.files,
+            )
         # Activity replay protection: check if we've already seen this activity
         if activity.id in self._recent_activity_ids:
             self._logger.warning(f"Duplicate activity detected, skipping: {activity.id}")
